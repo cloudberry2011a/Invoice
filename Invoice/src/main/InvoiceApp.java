@@ -34,14 +34,24 @@ public class InvoiceApp {
         }
 	}
 
-	private static double calculateDiscount(double subtotal, double discountPercent) {
-		// TODO Auto-generated method stub
-		return 0;
+	private static double calculateDiscount(double subtotal, double discountPercent) 
+	{
+		return subtotal * discountPercent;
 	}
 
-	private static double determineDiscount(double subtotal) {
-		// TODO Auto-generated method stub
-		return 0;
+	private static double determineDiscount(double subtotal) 
+	{
+		if (subtotal >= 200)
+		{
+			return 0.2;
+		}
+		else if (subtotal >= 100)
+		{
+			return 0.1;
+		}
+		else
+		{
+			return 0.0;
+		}
 	}
-
 }
