@@ -1,11 +1,16 @@
 package main;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.Scanner;
 
 public class InvoiceApp {
 
 	public static void main(String[] args) 
 	{
+        final BigDecimal SALES_TAX_PCT = new BigDecimal(".05");
+
 		System.out.println("Welcome to the Invoice Total Calculator");
         System.out.println();
         
@@ -16,29 +21,60 @@ public class InvoiceApp {
         while (choice.equalsIgnoreCase("y"))
         {
         		System.out.print("Enter subtotal: ");
-        		double subtotal = scanner.nextDouble();
+        			
+        		String subtotalString = scanner.next();
+        		BigDecimal subtotal = new BigDecimal(subtotalString);
+        		BigDecimal discountPercent = determineDiscount(subtotal);
         		
-        		double discountPercent = determineDiscount(subtotal);
-        		double discountAmount = calculateDiscount(subtotal, discountPercent);
-        		double total = subtotal - discountAmount;
+        		BigDecimal discountAmount = calculateDiscount(subtotal, discountPercent);
+        		BigDecimal totalBeforeTax = subtotal.subtract(discountAmount);
+        		BigDecimal salesTax = totalBeforeTax.multiply(SALES_TAX_PCT).setScale(2, RoundingMode.HALF_UP);
+        		BigDecimal total = totalBeforeTax.add(salesTax);
         		
-        		String message = "Discount percent: " + discountPercent + "\n"
-                        + "Discount amount:  " + discountAmount + "\n"
-                        + "Invoice total:    " + total + "\n";            
-        		System.out.println(message);
+        		// format and display the results
+        		NumberFormat currency = NumberFormat.getCurrencyInstance();
+        		NumberFormat percent = NumberFormat.getPercentInstance();
+        		String message = 
+                    "Discount percent: " + percent.format(discountPercent) + "\n"
+                  + "Discount amount:  " + currency.format(discountAmount) + "\n"
+                  + "Total before tax: " + currency.format(totalBeforeTax) + "\n"
+                  + "Sales tax:        " + currency.format(salesTax) + "\n"
+                  + "Invoice total:    " + currency.format(total) + "\n";
+                System.out.println(message);
 
-         // See if the user wants to continue
-         System.out.print("Continue? (y/n): ");
-         choice = scanner.next();
-         System.out.println();
+
+        		// See if the user wants to continue
+        		System.out.print("Continue? (y/n): ");
+        		choice = scanner.next();
+        		System.out.println();
         }
 	}
 
+	private static BigDecimal calculateDiscount(BigDecimal subtotal, BigDecimal discountPercent) 
+	{
+		BigDecimal discountAmount = subtotal.multiply(discountPercent).setScale(2, RoundingMode.HALF_UP);
+		return discountAmount;
+	}
+
+	private static BigDecimal determineDiscount(BigDecimal subtotal) 
+	{
+		BigDecimal discountPercent;
+		
+		if(subtotal.doubleValue() >= 100)
+			discountPercent = new BigDecimal("0.1");
+		else
+			discountPercent = new BigDecimal("0.0");
+		
+		return discountPercent;
+	}
+
+	@SuppressWarnings("unused")
 	private static double calculateDiscount(double subtotal, double discountPercent) 
 	{
 		return subtotal * discountPercent;
 	}
 
+	@SuppressWarnings("unused")
 	private static double determineDiscount(double subtotal) 
 	{
 		if (subtotal >= 200)
