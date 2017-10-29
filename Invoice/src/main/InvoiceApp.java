@@ -31,16 +31,7 @@ public class InvoiceApp {
         		BigDecimal salesTax = totalBeforeTax.multiply(SALES_TAX_PCT).setScale(2, RoundingMode.HALF_UP);
         		BigDecimal total = totalBeforeTax.add(salesTax);
         		
-        		// format and display the results
-        		NumberFormat currency = NumberFormat.getCurrencyInstance();
-        		NumberFormat percent = NumberFormat.getPercentInstance();
-        		String message = 
-                    "Discount percent: " + percent.format(discountPercent) + "\n"
-                  + "Discount amount:  " + currency.format(discountAmount) + "\n"
-                  + "Total before tax: " + currency.format(totalBeforeTax) + "\n"
-                  + "Sales tax:        " + currency.format(salesTax) + "\n"
-                  + "Invoice total:    " + currency.format(total) + "\n";
-                System.out.println(message);
+        		formatResult(discountPercent, discountAmount, totalBeforeTax, salesTax, total);
 
 
         		// See if the user wants to continue
@@ -48,6 +39,20 @@ public class InvoiceApp {
         		choice = scanner.next();
         		System.out.println();
         }
+	}
+
+	private static void formatResult(BigDecimal discountPercent, BigDecimal discountAmount, BigDecimal totalBeforeTax,
+			BigDecimal salesTax, BigDecimal total) {
+		// format and display the results
+		NumberFormat currency = NumberFormat.getCurrencyInstance();
+		NumberFormat percent = NumberFormat.getPercentInstance();
+		String message = 
+		    "Discount percent: " + percent.format(discountPercent) + "\n"
+		  + "Discount amount:  " + currency.format(discountAmount) + "\n"
+		  + "Total before tax: " + currency.format(totalBeforeTax) + "\n"
+		  + "Sales tax:        " + currency.format(salesTax) + "\n"
+		  + "Invoice total:    " + currency.format(total) + "\n";
+		System.out.println(message);
 	}
 
 	private static BigDecimal calculateDiscount(BigDecimal subtotal, BigDecimal discountPercent) 
