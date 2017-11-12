@@ -20,11 +20,12 @@ public class InvoiceApp {
         String choice = "y";
         while (choice.equalsIgnoreCase("y"))
         {
+				System.out.print("Enter customer type ((r)egular/(s)pecial: ");
+				String customerType = scanner.next();
         		System.out.print("Enter subtotal: ");
-        			
         		String subtotalString = scanner.next();
         		BigDecimal subtotal = new BigDecimal(subtotalString);
-        		BigDecimal discountPercent = determineDiscount(subtotal);
+        		BigDecimal discountPercent = determineDiscount(subtotal, customerType);
         		
         		BigDecimal discountAmount = calculateDiscount(subtotal, discountPercent);
         		BigDecimal totalBeforeTax = subtotal.subtract(discountAmount);
@@ -61,14 +62,35 @@ public class InvoiceApp {
 		return discountAmount;
 	}
 
-	private static BigDecimal determineDiscount(BigDecimal subtotal) 
+	private static BigDecimal determineDiscount(BigDecimal subtotal, String customerType) 
 	{
 		BigDecimal discountPercent;
+		double value = subtotal.doubleValue();
 		
-		if(subtotal.doubleValue() >= 100)
-			discountPercent = new BigDecimal("0.1");
-		else
-			discountPercent = new BigDecimal("0.0");
+		switch(customerType)
+		{
+			case "r":
+			case "R":	
+				if(value < 100)
+					discountPercent = new BigDecimal("0.0");
+				else if (value > 100 && value < 250)
+					discountPercent = new BigDecimal("0.1");
+				else
+					discountPercent = new BigDecimal("0.2");
+				break;
+			case "s":
+			case "S":
+				if(value < 100)
+					discountPercent = new BigDecimal("0.0");
+				else if (value > 100 && value < 250)
+					discountPercent = new BigDecimal("0.2");
+				else
+					discountPercent = new BigDecimal("0.25");
+				break;
+			default:
+				discountPercent =  new BigDecimal("0.0");
+				break;
+		}
 		
 		return discountPercent;
 	}
